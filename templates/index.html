@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jojo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    
+    <!-- <div class="content"> -->
+    <div class="table-container">
+        <table id="editableTable">
+            <thead>
+                <tr>
+                    <th>Позиция</th>
+                    <th>План (день)</th>
+                    <th>Факт (день)</th>
+                    <th>План (месяц)</th>
+                    <th>Факт (месяц)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <form action="/index" method="post">
+                    {% for el in articles %}
+                        <tr>
+                            <td contenteditable="true">{{el}}</td>
+                            <td contenteditable="true">2</td>
+                            <td contenteditable="true">3</td>
+                            <td contenteditable="true">4</td>
+                            <td contenteditable="true">5</td>
+                        </tr>
+                     {% endfor %}
+                    <!-- <tr>
+                        <td contenteditable="true">Кальян</td>
+                        <td contenteditable="true">2</td>
+                        <td contenteditable="true">3</td>
+                        <td contenteditable="true">4</td>
+                        <td contenteditable="true">5</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Кальян</td>
+                        <td contenteditable="true">2</td>
+                        <td contenteditable="true">3</td>
+                        <td contenteditable="true">4</td>
+                        <td contenteditable="true">5</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Кальян</td>
+                        <td contenteditable="true">2</td>
+                        <td contenteditable="true">3</td>
+                        <td contenteditable="true">4</td>
+                        <td contenteditable="true">5</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                        <td contenteditable="true">-</td>
+                    </tr> -->
+            </form>
+            </tbody>
+        </table>
+           
+    </div>
+    <!-- <img class="logo" src="./icon.png"> -->
+    <img class="logo" src="{{ url_for('static', filename='icon.png') }}">
+</body>
+</html>

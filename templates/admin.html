@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jojo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    
+    <p> 
+        <form action="/admin" method="post">
+            {% for el in articles %}
+                Позиция: {{el}} <br />
+                План день: <input type="text" name="p_day{{el}}"> План месяц: <input type="text" name="p_mes{{el}}">  <br /><br />
+            {% endfor %}     
+            <input type="submit" name= "form" value="Сохранить" />
+        </form>
+    </p>
+
+</body>
+</html>
