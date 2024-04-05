@@ -14,8 +14,34 @@ import threading
 plan_info = {}
 data_prod = {}
 
+
 def take_info():
     def take():
+        # URL запроса на зал и доставку
+        url = "https://cafe-jojo.iikoweb.ru/api/cash/shift/active"
+
+        # Заголовки запроса
+        headers = {
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Accept-Language": "ru_RU",
+            "Cookie": "PHPSESSID=lbgoou322ps9hj4rm1urausa04",
+            "Referer": "https://cafe-jojo.iikoweb.ru/till-shifts/ru-RU/index.html",
+            "Sec-Ch-Ua": '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": "Windows",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        }
+
+        # Выполнение GET-запроса по залу и доставке
+        response_cash = requests.get(url, headers=headers)
+        data_cash = response_cash.json()
+
+        #----------------------------------------------
+        
         # Получаем текущую дату и время по московскому времени
         now_moscow = datetime.now(pytz.timezone('Europe/Moscow'))
 
@@ -96,7 +122,7 @@ def take_info():
 
         for i in prodali:
             j = i
-            if i == '':
+            if i == '' or i == "Не кальян":
                 pass #i = 'Без категории'
             else:
                 #print("Позиция ",i,prodali[j]['forecast'])
@@ -115,7 +141,7 @@ def take_info():
             for i in p:
                 # print(i)
                 j = i
-                if i == '':
+                if i == '' or i == "Не кальян":
                     pass #i = 'Без категории'
                 else:
                     try:
@@ -144,6 +170,22 @@ def take_info():
                 data_prod[f'{i}'][1] = f"{per}"
             except:    
                 data_prod[f'{i}'].append(f"{per}")
+
+        # Работа с данными по залу и доставке
+        for shift in data_cash['shifts']:
+            nal = float(shift['salesCash'])
+            bezN = float(shift['salesCard'])
+            cash_only = nal+bezN
+            menedz = shift['manager']['name']
+            if menedz != "Доставка":
+                menedz = 'Зал'
+            try:
+                data_prod[f'{menedz}'][0] = f"{cash_only}"
+            except:    
+                data_prod[f'{menedz}'] = []
+                data_prod[f'{menedz}'].append(f"{cash_only}")
+                data_prod[f'{menedz}'].append(f"0")
+            print(f"{menedz}: {cash_only}")
 
     try:
         take()
