@@ -122,7 +122,7 @@ def take_info():
 
         for i in prodali:
             j = i
-            if i == '' or i == "Не кальян":
+            if i == '' or i == "Не кальян ":
                 pass #i = 'Без категории'
             else:
                 #print("Позиция ",i,prodali[j]['forecast'])
@@ -141,7 +141,7 @@ def take_info():
             for i in p:
                 # print(i)
                 j = i
-                if i == '' or i == "Не кальян":
+                if i == '' or i == "Не кальян ":
                     pass #i = 'Без категории'
                 else:
                     try:
