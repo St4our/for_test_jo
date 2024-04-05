@@ -173,19 +173,20 @@ def take_info():
 
         # Работа с данными по залу и доставке
         for shift in data_cash['shifts']:
-            nal = float(shift['salesCash'])
-            bezN = float(shift['salesCard'])
-            cash_only = nal+bezN
-            menedz = shift['manager']['name']
-            if menedz != "Доставка":
-                menedz = 'Зал'
-            try:
-                data_prod[f'{menedz}'][0] = f"{cash_only}"
-            except:    
-                data_prod[f'{menedz}'] = []
-                data_prod[f'{menedz}'].append(f"{cash_only}")
-                data_prod[f'{menedz}'].append(f"0")
-            print(f"{menedz}: {cash_only}")
+            if str(shift['sessionStatus']) == "OPEN":
+                nal = float(shift['salesCash'])
+                bezN = float(shift['salesCard'])
+                cash_only = nal+bezN
+                menedz = shift['manager']['name']
+                if menedz != "Доставка":
+                    menedz = 'Зал'
+                try:
+                    data_prod[f'{menedz}'][0] = f"{cash_only}"
+                except:    
+                    data_prod[f'{menedz}'] = []
+                    data_prod[f'{menedz}'].append(f"{cash_only}")
+                    data_prod[f'{menedz}'].append(f"0")
+                print(f"{menedz}: {cash_only}")
 
     try:
         take()
