@@ -257,7 +257,7 @@ def admin()-> json:
         print(data)
         plan_info = data
         #[{'item': 'Вок с курицей персонал', 'planDay': '1', 'planMonth': '2'}, {'item': 'По деревенски персонал', 'planDay': '3', 'planMonth': '4'}]
-        return jsonify({'status': 'success'})
+        return redirect(url_for('user'))
 
     #     for el in data_prod:
     #         try:
