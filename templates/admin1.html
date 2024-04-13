@@ -15,13 +15,12 @@
         {% endfor %} 
     </select>
     
+
     <button id="addToTable">Добавить в таблицу</button>
     <table id="dataTable">
         <thead>
             <tr>
                 <th>Элементы</th>
-                <th>План день</th>
-                <th>План месяц</th>
                 <th>Действия</th>
             </tr>
         </thead>
@@ -36,13 +35,9 @@
             $('#addToTable').click(function() {
                 var selectedItem = $('#dropdown').val();
                 if (selectedItem) {
-                    var row = $('<tr><td>' + selectedItem + '</td><td><input type="text" class="planDay"></td><td><input type="text" class="planMonth"></td><td><button class="deleteBtn">Удалить</button></td></tr>');
+                    var row = $('<tr><td>' + selectedItem + '</td><td><button class="deleteBtn">Удалить</button></td></tr>');
                     $('#dataTable tbody').append(row);
-                    dataArray.push({
-                        item: selectedItem,
-                        planDay: '',
-                        planMonth: ''
-                    });
+                    dataArray.push(selectedItem);
                 }
             });
     
@@ -51,18 +46,13 @@
                 var item = row.find('td:first').text();
                 row.remove();
                 dataArray = dataArray.filter(function(el) {
-                    return el.item !== item;
+                    return el !== item;
                 });
             });
     
             $('#saveData').click(function() {
-                dataArray.forEach(function(el, index) {
-                    var row = $('#dataTable tbody tr').eq(index);
-                    el.planDay = row.find('.planDay').val();
-                    el.planMonth = row.find('.planMonth').val();
-                });
                 $.ajax({
-                    url: '/admin',
+                    url: '/',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(dataArray),
@@ -78,5 +68,17 @@
             });
         });
     </script>
+
 </body>
 </html>
+
+
+    <!-- <p> 
+        <form action="/admin" method="post">
+            {% for el in articles %}
+                Позиция: {{el}} <br />
+                План день: <input type="text" name="p_day{{el}}"> План месяц: <input type="text" name="p_mes{{el}}">  <br /><br />
+            {% endfor %}     
+            <input type="submit" name= "form" value="Сохранить" />
+        </form>
+    </p> -->

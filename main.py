@@ -7,11 +7,11 @@ from dateutil.relativedelta import relativedelta
 from time import sleep
 import threading
 # from functools import update_wrapper
+from api_code_red import *
 
 
 
-
-plan_info = {}
+plan_info = None
 data_prod = {}
 
 
@@ -41,135 +41,62 @@ def take_info():
         data_cash = response_cash.json()
 
         #----------------------------------------------
-        
-        # Получаем текущую дату и время по московскому времени
-        now_moscow = datetime.now(pytz.timezone('Europe/Moscow'))
+        # Получаем текущую дату
+        #now = datetime.now()
+        now = datetime.now(pytz.timezone('Europe/Moscow'))
 
-        # Форматируем дату в нужный формат
-        formatted_date = now_moscow.strftime('%a %b %d %Y')
+        # Получаем первый день месяца
+        first_day_of_month = now.replace(day=1)
 
+        # Получаем последний день месяца
+        if now.month == 12:
+            # Если текущий месяц - декабрь, последний день - 31 декабря следующего года
+            last_day_of_month = now.replace(year=now.year + 1, month=1, day=1) - timedelta(days=1)
+        else:
+            # Для остальных месяцев последний день - последний день текущего месяца
+            last_day_of_month = now.replace(month=now.month + 1, day=1) - timedelta(days=1)
 
-        cookies = {
-            'PHPSESSID': '8833g5d95hiaidp8dbebo5j1sr',
-        }
+        # Форматируем даты в формат DD.MM.YYYY
+        formatted_first_day = first_day_of_month.strftime("%d.%m.%Y")
+        formatted_last_day = last_day_of_month.strftime("%d.%m.%Y")
+        now = now.strftime("%d.%m.%Y")
+        print(now)
 
-        headers = {
-            'authority': 'cafe-jojo.iikoweb.ru',
-            'accept': 'application/json, text/plain, */*',
-            'accept-language': '"ru_RU"',
-            'content-type': 'application/json;charset=UTF-8',
-            # 'cookie': 'PHPSESSID=8833g5d95hiaidp8dbebo5j1sr',
-            'origin': 'https://cafe-jojo.iikoweb.ru',
-            'referer': 'https://cafe-jojo.iikoweb.ru/storeops/index.html',
-            'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'empty',
-            'sec-fetch-mode': 'cors',
-            'sec-fetch-site': 'same-origin',
-            # 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        }
+        print(f"Первый день месяца: {formatted_first_day}")
+        print(f"Последний день месяца: {formatted_last_day}")
 
-        json_data = {
-            'dateFrom': f'{formatted_date}',
-            'dateTo': f'{formatted_date}',
-            'mode': 'TOTAL_BY_PERIODS',
-            'storeIds': [],
-        }
+        api = API(
+            login='API',
+            password='api123',
+        )
+        api.auth()
+        report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+        #report_day = api.report_olab(date_from='11.04.2024', date_to='11.04.2024')
+        report_day = api.report_olab(date_from=str(now), date_to=str(now))
+        #print(report)
 
-        r_mes = []
-
-        # Определяем первый день месяца
-        first_day_of_month = now_moscow.replace(day=1)
-
-        # Определяем последний день месяца
-        last_day_of_month = first_day_of_month + relativedelta(months=1) - timedelta(days=1)
-
-        # Находим понедельник первой недели месяца
-        current_week_monday = first_day_of_month - timedelta(days=first_day_of_month.weekday())
-
-        # Выводим даты понедельников и воскресенья для всех недель месяца
-        while current_week_monday <= last_day_of_month:
-            sleep(0.5)
-            # Находим воскресенье текущей недели
-            current_week_sunday = current_week_monday + timedelta(days=6)
-            
-            # Выводим даты понедельника и воскресенья
-            mon = current_week_monday.strftime('%a %b %d %Y')
-            sun = current_week_sunday.strftime('%a %b %d %Y')
-            #print(mon)
-            #print(sun)
-            
-            # Переходим к следующей неделе
-            current_week_monday += timedelta(days=7)
-
-            json_data_mes = {
-                'dateFrom': f"{mon}",
-                'dateTo': f"{sun}",
-                'mode': 'TOTAL_BY_PERIODS',
-                'storeIds': [],
-            }
-            r_r = requests.post('https://cafe-jojo.iikoweb.ru/api/report/product-mix', cookies=cookies, headers=headers, json=json_data_mes)
-            data_mes = json.loads(r_r.text)
-            prodali_mes = (data_mes['data']['totalByCategory'])
-            r_mes.append(prodali_mes)
-
-        r = requests.post('https://cafe-jojo.iikoweb.ru/api/report/product-mix', cookies=cookies, headers=headers, json=json_data)
-        data = json.loads(r.text)
-
-        prodali = (data['data']['totalByCategory'])
-        #print(prodali)
-
-        for i in prodali:
-            j = i
-            if i == '' or i == "Не кальян ":
-                pass #i = 'Без категории'
-            else:
-                #print("Позиция ",i,prodali[j]['forecast'])
-                k = f"{i}-{prodali[j]['forecast']}"
-                try:
-                    data_prod[f'{i}'][0] = f"{prodali[j]['forecast']}"
-                except:
-                    data_prod[f'{i}'] = []
-                    data_prod[f'{i}'].append(f"{prodali[j]['forecast']}")
-                    #print("Записали ",k)
-        
-        data_mes_per = {}
-        #print(r_mes)
-
-        for p in r_mes:
-            for i in p:
-                # print(i)
-                j = i
-                if i == '' or i == "Не кальян ":
-                    pass #i = 'Без категории'
-                else:
-                    try:
-                        #print("Позиция mes ",i,p[j]['actual'])
-                        k = f"{i}-{p[j]['actual']}"
-                        #data_prod.append(k)
-                        # data_prod[f'{i}'] = []
-                        try:
-                            data_mes_per[f'{i}'].append(f"{p[j]['actual']}")
-                        except:
-                            data_mes_per[f'{i}'] = []
-                            data_mes_per[f'{i}'].append(f"{p[j]['actual']}")
-                        # data_prod[f'{i}'].append(f"{prodali[j]['actual']}")
-                        # data_prod[f'{i}'] = f"{prodali[j]['actual']}"
-                       
-                    except:
-                        pass
-
-        for i in data_mes_per:
-            # try:
-            per = 0
-            for j in data_mes_per[f'{i}']:
-                #print(i,' : ', j)
-                per += float(j)
+        # Извлечение всех DishName и DishAmountInt
+        for dish in report_mon['report']['r']:
+            dish_name = dish['DishName']
+            dish_amount_int = str(dish['DishAmountInt'])
+            #print(f"Название: {dish_name}, Кол-во: {dish_amount_int.split('.')[0]}")
             try:
-                data_prod[f'{i}'][1] = f"{per}"
+                data_prod[f'{dish_name}'][0] = f"{dish_amount_int.split('.')[0]}"
             except:    
-                data_prod[f'{i}'].append(f"{per}")
+                data_prod[f'{dish_name}'] = [] 
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
+
+        for dish in report_day['report']['r']:
+            dish_name = dish['DishName']
+            dish_amount_int = str(dish['DishAmountInt'])
+            #print(f"Название: {dish_name}, Кол-во: {dish_amount_int.split('.')[0]}")
+            try:
+                data_prod[f'{dish_name}'][1] = f"{dish_amount_int.split('.')[0]}"
+            except:   
+                #data_prod[f'{dish_name}'] = [] 
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
+
+        
 
         # Работа с данными по залу и доставке
         for shift in data_cash['shifts']:
@@ -181,12 +108,21 @@ def take_info():
                 if menedz != "Доставка":
                     menedz = 'Зал'
                 try:
-                    data_prod[f'{menedz}'][0] = f"{cash_only}"
+                    data_prod[f'{menedz}'][1] = f"{cash_only}"
                 except:    
                     data_prod[f'{menedz}'] = []
-                    data_prod[f'{menedz}'].append(f"{cash_only}")
                     data_prod[f'{menedz}'].append(f"0")
+                    data_prod[f'{menedz}'].append(f"{cash_only}") 
                 print(f"{menedz}: {cash_only}")
+        
+        #[{'item': 'Вок с курицей персонал', 'planDay': '1', 'planMonth': '2'}, {'item': 'По деревенски персонал', 'planDay': '3', 'planMonth': '4'}]
+        if plan_info != None:
+            for pos_prod in data_prod:
+                #if str(pos_prod) in plan_info:
+                for plan_pos in plan_info:
+                    if str(plan_pos['item']) == str(pos_prod):
+                        plan_pos['factDay'] = float(plan_pos['planDay'])-float(data_prod[pos_prod][1])
+                        plan_pos['factMon'] = float(plan_pos['planMonth'])-float(data_prod[pos_prod][0])
 
     try:
         take()
@@ -298,7 +234,7 @@ def login():
             #articles = ['Kal', 'Kal2', 'Kal3']
             # take_info()
             articles = data_prod
-            print("Пришло: ",articles)
+            #print("Пришло: ",articles)
             return render_template('admin.html', articles=articles)
             # return render_template('index.html')
         
@@ -312,43 +248,54 @@ def login():
         return render_template('login.html')
 
 @app.route('/admin', methods=['POST', 'GET'])
-def admin():
+def admin()-> json:
     global data_prod
     global plan_info
 
     if request.method == "POST":
-        for el in data_prod:
-            try:
-                del data_prod[f'{el}'][2]
-                plan_info = {}
-                data_prod = {}
-                # take_info()
-            except:
-                pass
-            j = data_prod.get(f'{el}')
-            a = request.form[f"p_day{el}"]
-            b = request.form[f"p_mes{el}"]
-            try:
-                data_prod[f'{el}'].append(a)
-                data_prod[f'{el}'].append(b)
-            except:
-                sleep(6)
-                data_prod[f'{el}'].append(a)
-                data_prod[f'{el}'].append(b)
+        data = request.get_json()
+        print(data)
+        plan_info = data
+        #[{'item': 'Вок с курицей персонал', 'planDay': '1', 'planMonth': '2'}, {'item': 'По деревенски персонал', 'planDay': '3', 'planMonth': '4'}]
+        return jsonify({'status': 'success'})
 
-        print(plan_info)
-        print(data_prod)
-        return redirect(url_for('user'))
-        #return render_template('user.html', data_prod=data_prod)
+    #     for el in data_prod:
+    #         try:
+    #             del data_prod[f'{el}'][2]
+    #             plan_info = {}
+    #             data_prod = {}
+    #             # take_info()
+    #         except:
+    #             pass
+    #         j = data_prod.get(f'{el}')
+    #         a = request.form[f"p_day{el}"]
+    #         b = request.form[f"p_mes{el}"]
+    #         try:
+    #             data_prod[f'{el}'].append(a)
+    #             data_prod[f'{el}'].append(b)
+    #         except:
+    #             sleep(6)
+    #             data_prod[f'{el}'].append(a)
+    #             data_prod[f'{el}'].append(b)
+
+    #     print(plan_info)
+    #     print(data_prod)
+    #     return redirect(url_for('user'))
+
 
 def while_obn():
     while True:
-        print(plan_info)
-        print(data_prod)
-        sleep(5)
-        take_info()
-        print(plan_info)
-        print(data_prod)
+        try:
+            #print(plan_info)
+            #print(data_prod)
+            take_info()         
+            print("Вот что имеем: ", plan_info)
+            print("Вот что получили: ", data_prod)
+            sleep(125)
+            #print(data_prod)
+        except:
+            sleep(125)
+
 def start_obn():
     info_take = threading.Thread(target=while_obn)
     info_take.start()
@@ -364,7 +311,7 @@ def start_obn():
 @app.route('/user', methods=['POST', 'GET'])
 def user():
     if request.method == "GET":
-        return render_template('user.html', data_prod=data_prod)
+        return render_template('user.html', data_prod=plan_info)
         
 start_obn()  
 

@@ -23,98 +23,21 @@
                 <tr>
                     <th>Позиция</th>
                     <th>План (день)</th>
-                    <th>Факт (день)</th>
+                    <th>Осталось продать за день</th>
                     <th>План (месяц)</th>
-                    <th>Факт (месяц)</th>
+                    <th>Осталось продать за месяц</th>
                 </tr>
             </thead>
-            <tbody>     
+            <tbody>    
                 {% for el in data_prod %}
                         <tr>
-                            <td>{{el}}</td>
-                            <td>{{data_prod[el][2]}}</td>
-                            <td>{{data_prod[el][0]}}</td>
-                            <td>{{data_prod[el][3]}}</td>
-                            <td>{{data_prod[el][1]}}</td>
+                            <td>{{el['item']}}</td>
+                            <td>{{el['planDay']}}</td>
+                            <td>{{el['factDay']}}</td>
+                            <td>{{el['planMonth']}}</td>
+                            <td>{{el['factMon']}}</td>
                         </tr>
-                {% endfor %}           
-                <!-- <tr> 
-                    <td>Кальян</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                </tr>
-                <tr>
-                    <td>Кальян</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                </tr>
-                <tr>
-                    <td>Кальян</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                </tr> -->
+                {% endfor %}   
             
             </tbody>
         </table>
