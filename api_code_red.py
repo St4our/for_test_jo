@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 class API:
     url: str = 'https://cafe-jojo.iiko.it:443/resto/api'
-    token: str
+    token: str = 'b75df82a-0201-0c24-846f-8c425f14f812'
 
     def __init__(self, login, password):
         self.login = login
@@ -24,6 +24,7 @@ class API:
             print(f'{r.status_code}: {r.text}')
             raise
         self.token = r.text
+        return self.token
 
     def report_olab(self, date_from: str, date_to: str):
         url = f'{self.url}/reports/olap'
@@ -40,6 +41,9 @@ class API:
             f'to={date_to}',
         ])
         r = requests.get(url=f'{url}?{params_str}')
+        if r.status_code == 401:
+            print(f'New token: {self.auth()}')
+            return self.report_olab(date_from=date_from, date_to=date_to)
         if r.status_code != 200:
             print(f'{r.status_code}: {r.text}')
             raise

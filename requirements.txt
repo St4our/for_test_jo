@@ -3,3 +3,4 @@ flask
 pytz
 python-dateutil
 xmltodict
+telebot

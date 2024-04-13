@@ -8,15 +8,31 @@ from time import sleep
 import threading
 # from functools import update_wrapper
 from api_code_red import *
+import telebot
 
 
 
 plan_info = None
 data_prod = {}
+plan_save_per = 0
 
 
 def take_info():
     def take():
+        global plan_save_per
+
+        token = '6806606295:AAGJiSyuXx__k1LIpyGFmbi_DtE1SSkQCFg'
+        bot = telebot.TeleBot(token, parse_mode=None)
+        time_for_save = datetime.now(pytz.timezone('Europe/Moscow'))
+        time_for_post = time_for_save.strftime("%d.%m.%Y")
+        #time_for_save = 
+        if time_for_save.hour == 23 and time_for_save.minute >= 50 and plan_save_per != 1:
+            bot.send_message(1363777899, f"{time_for_post}: {plan_info}")#1363777899 280608938
+            plan_save_per = 1
+
+        if time_for_save.hour == 1 and time_for_save.minute >= 1 and plan_save_per != 0:
+            plan_save_per = 0
+
         # URL запроса на зал и доставку
         url = "https://cafe-jojo.iikoweb.ru/api/cash/shift/active"
 
@@ -69,17 +85,17 @@ def take_info():
             login='API',
             password='api123',
         )
-        api.auth()
+        #api.auth()
         report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+        sleep(2)
         #report_day = api.report_olab(date_from='11.04.2024', date_to='11.04.2024')
         report_day = api.report_olab(date_from=str(now), date_to=str(now))
-        #print(report)
 
         # Извлечение всех DishName и DishAmountInt
         for dish in report_mon['report']['r']:
             dish_name = dish['DishName']
+            #print(dish_name)
             dish_amount_int = str(dish['DishAmountInt'])
-            #print(f"Название: {dish_name}, Кол-во: {dish_amount_int.split('.')[0]}")
             try:
                 data_prod[f'{dish_name}'][0] = f"{dish_amount_int.split('.')[0]}"
             except:    
@@ -89,14 +105,21 @@ def take_info():
         for dish in report_day['report']['r']:
             dish_name = dish['DishName']
             dish_amount_int = str(dish['DishAmountInt'])
-            #print(f"Название: {dish_name}, Кол-во: {dish_amount_int.split('.')[0]}")
             try:
-                data_prod[f'{dish_name}'][1] = f"{dish_amount_int.split('.')[0]}"
+                try:
+                    data_prod[f'{dish_name}'][1] = f"{dish_amount_int.split('.')[0]}"
+                except:
+                    data_prod[f'{dish_name}'][1] = "0"
             except:   
                 #data_prod[f'{dish_name}'] = [] 
                 data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
 
-        
+                    
+        for i in data_prod:
+            # Проверяем, есть ли ключ в словаре и длина соответствующего массива
+            print(i, len(data_prod[f'{i}']))
+            if len(data_prod[f'{i}']) < 2:
+                data_prod[f'{i}'].append("0")
 
         # Работа с данными по залу и доставке
         for shift in data_cash['shifts']:
@@ -257,7 +280,7 @@ def admin()-> json:
         print(data)
         plan_info = data
         #[{'item': 'Вок с курицей персонал', 'planDay': '1', 'planMonth': '2'}, {'item': 'По деревенски персонал', 'planDay': '3', 'planMonth': '4'}]
-        return redirect(url_for('user'))
+        return jsonify({'status': 'success'})
 
     #     for el in data_prod:
     #         try:
@@ -291,10 +314,10 @@ def while_obn():
             take_info()         
             print("Вот что имеем: ", plan_info)
             print("Вот что получили: ", data_prod)
-            sleep(125)
+            sleep(150)
             #print(data_prod)
         except:
-            sleep(125)
+            sleep(150)
 
 def start_obn():
     info_take = threading.Thread(target=while_obn)
