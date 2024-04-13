@@ -2,3 +2,5 @@ requests
 flask
 pytz
 python-dateutil
+hashlib
+xmltodict
