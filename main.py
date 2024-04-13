@@ -9,6 +9,7 @@ import threading
 # from functools import update_wrapper
 from api_code_red import *
 import telebot
+import traceback
 
 
 
@@ -41,7 +42,7 @@ def take_info():
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br, zstd",
             "Accept-Language": "ru_RU",
-            "Cookie": "PHPSESSID=lbgoou322ps9hj4rm1urausa04",
+            "Cookie": "PHPSESSID=jeb6b049ji1v105ud3mabbslu7",
             "Referer": "https://cafe-jojo.iikoweb.ru/till-shifts/ru-RU/index.html",
             "Sec-Ch-Ua": '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
             "Sec-Ch-Ua-Mobile": "?0",
@@ -55,6 +56,23 @@ def take_info():
         # Выполнение GET-запроса по залу и доставке
         response_cash = requests.get(url, headers=headers)
         data_cash = response_cash.json()
+        print(data_cash)
+        # Работа с данными по залу и доставке
+        for shift in data_cash['shifts']:
+            if str(shift['sessionStatus']) == "OPEN":
+                nal = float(shift['salesCash'])
+                bezN = float(shift['salesCard'])
+                cash_only = nal+bezN
+                menedz = shift['manager']['name']
+                if menedz != "Доставка":
+                    menedz = 'Зал'
+                try:
+                    data_prod[f'{menedz}'][1] = f"{cash_only}"
+                except:    
+                    data_prod[f'{menedz}'] = []
+                    data_prod[f'{menedz}'].append(f"0")
+                    data_prod[f'{menedz}'].append(f"{cash_only}") 
+                print(f"{menedz}: {cash_only}")
 
         #----------------------------------------------
         # Получаем текущую дату
@@ -117,26 +135,11 @@ def take_info():
                     
         for i in data_prod:
             # Проверяем, есть ли ключ в словаре и длина соответствующего массива
-            print(i, len(data_prod[f'{i}']))
+            #print(i, len(data_prod[f'{i}']))
             if len(data_prod[f'{i}']) < 2:
                 data_prod[f'{i}'].append("0")
 
-        # Работа с данными по залу и доставке
-        for shift in data_cash['shifts']:
-            if str(shift['sessionStatus']) == "OPEN":
-                nal = float(shift['salesCash'])
-                bezN = float(shift['salesCard'])
-                cash_only = nal+bezN
-                menedz = shift['manager']['name']
-                if menedz != "Доставка":
-                    menedz = 'Зал'
-                try:
-                    data_prod[f'{menedz}'][1] = f"{cash_only}"
-                except:    
-                    data_prod[f'{menedz}'] = []
-                    data_prod[f'{menedz}'].append(f"0")
-                    data_prod[f'{menedz}'].append(f"{cash_only}") 
-                print(f"{menedz}: {cash_only}")
+        
         
         #[{'item': 'Вок с курицей персонал', 'planDay': '1', 'planMonth': '2'}, {'item': 'По деревенски персонал', 'planDay': '3', 'planMonth': '4'}]
         if plan_info != None:
@@ -165,7 +168,7 @@ def take_info():
 
 
         cookies = {
-            'PHPSESSID': '8833g5d95hiaidp8dbebo5j1sr',
+            'PHPSESSID': 'jeb6b049ji1v105ud3mabbslu7',
         }
 
         headers = {
@@ -191,7 +194,7 @@ def take_info():
 
         response = requests.post('https://cafe-jojo.iikoweb.ru/api/auth/login', cookies=cookies, headers=headers, json=json_data)
         cookies = {
-            'PHPSESSID': '8833g5d95hiaidp8dbebo5j1sr',
+            'PHPSESSID': 'jeb6b049ji1v105ud3mabbslu7',
         }
 
         headers = {
@@ -212,7 +215,7 @@ def take_info():
 
 
         cookies = {
-            'PHPSESSID': '8833g5d95hiaidp8dbebo5j1sr',
+            'PHPSESSID': 'jeb6b049ji1v105ud3mabbslu7',
         }
 
         headers = {
@@ -230,7 +233,8 @@ def take_info():
         }
 
         response = requests.get('https://cafe-jojo.iikoweb.ru/api/stores/select/102023', cookies=cookies, headers=headers)
-
+        
+        print("переавторизовался1")
         take()
         print("переавторизовался")
 
@@ -314,10 +318,11 @@ def while_obn():
             take_info()         
             print("Вот что имеем: ", plan_info)
             print("Вот что получили: ", data_prod)
-            sleep(150)
+            sleep(30)
             #print(data_prod)
         except:
-            sleep(150)
+            traceback.print_exc()
+            sleep(30)
 
 def start_obn():
     info_take = threading.Thread(target=while_obn)
