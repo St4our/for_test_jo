@@ -48,6 +48,25 @@ class API:
             print(f'{r.status_code}: {r.text}')
             raise
         return xmltodict.parse(r.text)
+    
+    def report2_olab(self, date_from: str, date_to: str):
+        url = f'{self.url}/reports/olap'
+        params_str = '&'.join([
+            f'key={self.token}',
+            f'report=SALES',
+            f'groupRow=DishCategory',
+            f'agr=DishAmountInt',
+            f'from={date_from}',
+            f'to={date_to}',
+        ])
+        r = requests.get(url=f'{url}?{params_str}')
+        if r.status_code == 401:
+            print(f'New token: {self.auth()}')
+            return self.report_olab(date_from=date_from, date_to=date_to)
+        if r.status_code != 200:
+            print(f'{r.status_code}: {r.text}')
+            raise
+        return xmltodict.parse(r.text)
 
 
 #if __name__ == '__main__':

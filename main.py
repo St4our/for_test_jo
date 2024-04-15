@@ -22,13 +22,13 @@ def take_info():
     def take():
         global plan_save_per
 
-        token = '6806606295:AAGJiSyuXx__k1LIpyGFmbi_DtE1SSkQCFg'
-        bot = telebot.TeleBot(token, parse_mode=None)
         time_for_save = datetime.now(pytz.timezone('Europe/Moscow'))
         time_for_post = time_for_save.strftime("%d.%m.%Y")
-        #time_for_save = 
+        
         if time_for_save.hour == 23 and time_for_save.minute >= 50 and plan_save_per != 1:
-            bot.send_message(1363777899, f"{time_for_post}: {plan_info}")#1363777899 280608938
+            myfile = open(f"./{time_for_post}.txt", 'wb')
+            myfile.write (f"{str(time_for_post)} : {str(plan_info)}".encode('utf-8'))
+            myfile.close()
             plan_save_per = 1
 
         if time_for_save.hour == 1 and time_for_save.minute >= 1 and plan_save_per != 0:
@@ -105,9 +105,32 @@ def take_info():
         )
         #api.auth()
         report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-        sleep(2)
-        #report_day = api.report_olab(date_from='11.04.2024', date_to='11.04.2024')
         report_day = api.report_olab(date_from=str(now), date_to=str(now))
+        sleep(2)
+        report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+        report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
+        #report_day = api.report_olab(date_from='11.04.2024', date_to='11.04.2024')
+        for dish in report_mon_cat['report']['r']:
+            dish_name = dish['DishCategory']
+            #print(dish_name)
+            dish_amount_int = str(dish['DishAmountInt'])
+            try:
+                data_prod[f'{dish_name}'][0] = f"{dish_amount_int.split('.')[0]}"
+            except:    
+                data_prod[f'{dish_name}'] = [] 
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
+        
+        for dish in report_day_cat['report']['r']:
+            dish_name = dish['DishCategory']
+            dish_amount_int = str(dish['DishAmountInt'])
+            try:
+                try:
+                    data_prod[f'{dish_name}'][1] = f"{dish_amount_int.split('.')[0]}"
+                except:
+                    data_prod[f'{dish_name}'][1] = "0"
+            except:   
+                #data_prod[f'{dish_name}'] = [] 
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
 
         # Извлечение всех DishName и DishAmountInt
         for dish in report_mon['report']['r']:
