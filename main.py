@@ -429,7 +429,7 @@ def while_obn():
             #print(data_prod)
         except:
             traceback.print_exc()
-            sleep(30)
+            sleep(3630)
 
 def start_obn():
     info_take = threading.Thread(target=while_obn)
