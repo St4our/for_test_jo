@@ -7,9 +7,79 @@ from dateutil.relativedelta import relativedelta
 from time import sleep
 import threading
 # from functools import update_wrapper
-from api_code_red import *
+#from api_code_red import *
 import telebot
 import traceback
+
+import hashlib
+
+#import requests
+import xmltodict
+
+from datetime import datetime, timedelta
+
+
+
+class API:
+    url: str = 'https://cafe-jojo.iiko.it:443/resto/api'
+    token: str = 'b75df82a-0201-0c24-846f-8c425f14f812'
+
+    def __init__(self, login, password):
+        self.login = login
+        self.password = password
+        self.hash = hashlib.sha1(self.password.encode('utf-8')).hexdigest()
+
+    def auth(self):
+        url = f'{self.url}/auth'
+        params = {'login': self.login, 'pass': self.hash}
+        r = requests.get(url=url, params=params)
+        if r.status_code != 200:
+            print(f'{r.status_code}: {r.text}')
+            raise
+        self.token = r.text
+        return self.token
+
+    def report_olab(self, date_from: str, date_to: str):
+        url = f'{self.url}/reports/olap'
+        self.auth()
+        params_str = '&'.join([
+            f'key={self.token}',
+            f'report=SALES',
+            f'groupRow=DishCode',
+            f'groupRow=DishName',
+            f'groupRow=DishFullName',
+            f'groupRow=DishCategory',
+            f'agr=DishAmountInt',
+            f'from={date_from}',
+            f'to={date_to}',
+        ])
+        r = requests.get(url=f'{url}?{params_str}')
+        if r.status_code == 401:
+            print(f'New token: {self.auth()}')
+            return self.report_olab(date_from=date_from, date_to=date_to)
+        if r.status_code != 200:
+            print(f'{r.status_code}: {r.text}')
+            raise
+        return xmltodict.parse(r.text)
+    
+    def report2_olab(self, date_from: str, date_to: str):
+        url = f'{self.url}/reports/olap'
+        params_str = '&'.join([
+            f'key={self.token}',
+            f'report=SALES',
+            f'groupRow=DishCategory',
+            f'agr=DishAmountInt',
+            f'from={date_from}',
+            f'to={date_to}',
+        ])
+        r = requests.get(url=f'{url}?{params_str}')
+        if r.status_code == 401:
+            print(f'New token: {self.auth()}')
+            return self.report_olab(date_from=date_from, date_to=date_to)
+        if r.status_code != 200:
+            print(f'{r.status_code}: {r.text}')
+            raise
+        return xmltodict.parse(r.text)
 
 
 
@@ -24,7 +94,7 @@ def take_info():
 
         time_for_save = datetime.now(pytz.timezone('Europe/Moscow'))
         time_for_post = time_for_save.strftime("%d.%m.%Y")
-        
+
         if time_for_save.hour == 23 and time_for_save.minute >= 50 and plan_save_per != 1:
             myfile = open(f"./{time_for_post}.txt", 'wb')
             myfile.write (f"{str(time_for_post)} : {str(plan_info)}".encode('utf-8'))
