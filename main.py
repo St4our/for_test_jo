@@ -169,16 +169,30 @@ def take_info():
         print(f"Первый день месяца: {formatted_first_day}")
         print(f"Последний день месяца: {formatted_last_day}")
 
-        api = API(
-            login='API',
-            password='api123',
-        )
-        #api.auth()
-        report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-        report_day = api.report_olab(date_from=str(now), date_to=str(now))
-        sleep(2)
-        report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-        report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
+        try:
+            api = API(
+                login='API',
+                password='api123',
+            )
+            #api.auth()
+
+            report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+            report_day = api.report_olab(date_from=str(now), date_to=str(now))
+            sleep(2)
+            report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+            report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
+        except:
+            api = API(
+                login='API',
+                password='api123',
+            )
+            #api.auth()
+
+            report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+            report_day = api.report_olab(date_from=str(now), date_to=str(now))
+            sleep(2)
+            report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+            report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
         #report_day = api.report_olab(date_from='11.04.2024', date_to='11.04.2024')
         for dish in report_mon_cat['report']['r']:
             dish_name = dish['DishCategory']
