@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 
 class API:
     url: str = 'https://cafe-jojo.iiko.it:443/resto/api'
-    token: str = 'b75df82a-0201-0c24-846f-8c425f14f812'
+    token: str = 'e36555f3-5ba3-bc15-cb81-2b27b4de6a37'
 
     def __init__(self, login, password):
         self.login = login
@@ -126,7 +126,7 @@ def take_info():
         # Выполнение GET-запроса по залу и доставке
         response_cash = requests.get(url, headers=headers)
         data_cash = response_cash.json()
-        print(data_cash)
+        #print(data_cash)
         # Работа с данными по залу и доставке
         for shift in data_cash['shifts']:
             if str(shift['sessionStatus']) == "OPEN":
@@ -142,7 +142,7 @@ def take_info():
                     data_prod[f'{menedz}'] = []
                     data_prod[f'{menedz}'].append(f"0")
                     data_prod[f'{menedz}'].append(f"{cash_only}") 
-                print(f"{menedz}: {cash_only}")
+                #print(f"{menedz}: {cash_only}")
 
         #----------------------------------------------
         # Получаем текущую дату
@@ -166,34 +166,35 @@ def take_info():
         now = now.strftime("%d.%m.%Y")
         print(now)
 
-        print(f"Первый день месяца: {formatted_first_day}")
-        print(f"Последний день месяца: {formatted_last_day}")
+        #print(f"Первый день месяца: {formatted_first_day}")
+        #print(f"Последний день месяца: {formatted_last_day}")
 
-        try:
+        api = API(
+            login='API',
+            password='api123',
+        )
+        #api.auth()
+
+        report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+        report_day = api.report_olab(date_from=str(now), date_to=str(now))
+        #sleep(2)
+        report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
+        report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
+
+        if report_day_cat['report'] == None or report_day['report']== None:
             api = API(
                 login='API',
                 password='api123',
             )
-            #api.auth()
-
-            report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-            report_day = api.report_olab(date_from=str(now), date_to=str(now))
-            sleep(2)
-            report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-            report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
-        except:
-            api = API(
-                login='API',
-                password='api123',
-            )
-            #api.auth()
-
-            report_mon = api.report_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-            report_day = api.report_olab(date_from=str(now), date_to=str(now))
-            sleep(2)
-            report_mon_cat = api.report2_olab(date_from=formatted_first_day, date_to=formatted_last_day)
-            report_day_cat = api.report2_olab(date_from=str(now), date_to=str(now))
+            now_p = datetime.now(pytz.timezone('Europe/Moscow'))
+            previous_day = now_p - timedelta(days=1)
+            previous_day = previous_day.strftime("%d.%m.%Y")
+            print("previous_day: ", previous_day)
+            report_day = api.report_olab(date_from=str(previous_day), date_to=str(previous_day))
+            report_day_cat = api.report2_olab(date_from=str(previous_day), date_to=str(previous_day))
         #report_day = api.report_olab(date_from='11.04.2024', date_to='11.04.2024')
+
+        #print("report_mon_cat: ", report_mon_cat)
         for dish in report_mon_cat['report']['r']:
             dish_name = dish['DishCategory']
             #print(dish_name)
@@ -203,7 +204,8 @@ def take_info():
             except:    
                 data_prod[f'{dish_name}'] = [] 
                 data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
-        
+
+        #print("report_day_cat: ", report_day_cat)
         for dish in report_day_cat['report']['r']:
             dish_name = dish['DishCategory']
             dish_amount_int = str(dish['DishAmountInt'])
