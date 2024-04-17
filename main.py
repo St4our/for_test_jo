@@ -10,6 +10,7 @@ import threading
 #from api_code_red import *
 import telebot
 import traceback
+import logging
 
 import hashlib
 
@@ -35,6 +36,7 @@ class API:
         r = requests.get(url=url, params=params)
         if r.status_code != 200:
             print(f'{r.status_code}: {r.text}')
+            logging.critical(f'{r.status_code}: {r.text}')
             raise
         self.token = r.text
         return self.token
@@ -59,6 +61,7 @@ class API:
             return self.report_olab(date_from=date_from, date_to=date_to)
         if r.status_code != 200:
             print(f'{r.status_code}: {r.text}')
+            logging.critical(f'{r.status_code}: {r.text}')
             raise
         return xmltodict.parse(r.text)
     
@@ -78,6 +81,7 @@ class API:
             return self.report_olab(date_from=date_from, date_to=date_to)
         if r.status_code != 200:
             print(f'{r.status_code}: {r.text}')
+            logging.critical(f'{r.status_code}: {r.text}')
             raise
         return xmltodict.parse(r.text)
 
@@ -135,7 +139,9 @@ def take_info():
                 cash_only = nal+bezN
                 menedz = shift['manager']['name']
                 if menedz != "Доставка":
-                    menedz = 'Зал'
+                    menedz = 'Для зала'
+                if menedz == "Доставка":
+                    menedz = 'Для доставки'
                 try:
                     data_prod[f'{menedz}'][1] = f"{cash_only}"
                 except:    
