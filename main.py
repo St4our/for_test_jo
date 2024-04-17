@@ -30,7 +30,16 @@ class API:
         self.password = password
         self.hash = hashlib.sha1(self.password.encode('utf-8')).hexdigest()
 
+    def logout(self):
+        url = f'{self.url}/logout'
+        r = requests.get(url=url, params={'key': self.token})
+        if r.status_code != 200:
+            print(f'{r.status_code}: {r.text}')
+            raise
+        self.token = r.text
+
     def auth(self):
+        self.logout()
         url = f'{self.url}/auth'
         params = {'login': self.login, 'pass': self.hash}
         r = requests.get(url=url, params=params)
@@ -40,6 +49,7 @@ class API:
             raise
         self.token = r.text
         return self.token
+    
 
     def report_olab(self, date_from: str, date_to: str):
         url = f'{self.url}/reports/olap'
