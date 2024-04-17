@@ -39,7 +39,10 @@ class API:
         self.token = r.text
 
     def auth(self):
-        self.logout()
+        try:
+            self.logout()
+        except:
+            pass
         url = f'{self.url}/auth'
         params = {'login': self.login, 'pass': self.hash}
         r = requests.get(url=url, params=params)
