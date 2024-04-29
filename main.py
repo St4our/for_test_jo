@@ -76,7 +76,12 @@ class API:
             print(f'{r.status_code}: {r.text}')
             logging.critical(f'{r.status_code}: {r.text}')
             raise
-        return xmltodict.parse(r.text)
+        json_data = xmltodict.parse(r.text)
+        for item in json_data['report']['r']:
+            if item['DeletedWithWriteoff'] == 'DELETED_WITHOUT_WRITEOFF':
+                json_data['report']['r'].remove(item)
+        return json_data
+        #return xmltodict.parse(r.text)
     
     def report2_olab(self, date_from: str, date_to: str):
         url = f'{self.url}/reports/olap'
@@ -96,7 +101,12 @@ class API:
             print(f'{r.status_code}: {r.text}')
             logging.critical(f'{r.status_code}: {r.text}')
             raise
-        return xmltodict.parse(r.text)
+        json_data = xmltodict.parse(r.text)
+        for item in json_data['report']['r']:
+            if item['DeletedWithWriteoff'] == 'DELETED_WITHOUT_WRITEOFF':
+                json_data['report']['r'].remove(item)
+        return json_data
+        #return xmltodict.parse(r.text)
 
 
 
