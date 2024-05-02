@@ -287,8 +287,8 @@ def take_info():
                 #if str(pos_prod) in plan_info:
                 for plan_pos in plan_info:
                     if str(plan_pos['item']) == str(pos_prod):
-                        plan_pos['factDay'] = float(plan_pos['planDay'])-float(data_prod[pos_prod][1])
-                        plan_pos['factMon'] = float(plan_pos['planMonth'])-float(data_prod[pos_prod][0])
+                        plan_pos['factDay'] = int(float(plan_pos['planDay'])-float(data_prod[pos_prod][1]))
+                        plan_pos['factMon'] = int(float(plan_pos['planMonth'])-float(data_prod[pos_prod][0]))
 
     try:
         take()
