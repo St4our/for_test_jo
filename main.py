@@ -231,10 +231,10 @@ def take_info():
             #print(dish_name)
             dish_amount_int = str(dish['DishAmountInt'])
             try:
-                data_prod[f'{dish_name}'][0] = int(dish_amount_int.split('.')[0])
+                data_prod[f'{dish_name}'][0] = f"{dish_amount_int.split('.')[0]}"
             except:    
                 data_prod[f'{dish_name}'] = [] 
-                data_prod[f'{dish_name}'].append(int(dish_amount_int.split('.')[0]))
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
 
         #print("report_day_cat: ", report_day_cat)
         for dish in report_day_cat['report']['r']:
@@ -242,12 +242,12 @@ def take_info():
             dish_amount_int = str(dish['DishAmountInt'])
             try:
                 try:
-                    data_prod[f'{dish_name}'][1] = int(dish_amount_int.split('.')[0])
+                    data_prod[f'{dish_name}'][1] = f"{dish_amount_int.split('.')[0]}"
                 except:
                     data_prod[f'{dish_name}'][1] = "0"
             except:   
                 #data_prod[f'{dish_name}'] = [] 
-                data_prod[f'{dish_name}'].append(int(dish_amount_int.split('.')[0]))
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
 
         # Извлечение всех DishName и DishAmountInt
         for dish in report_mon['report']['r']:
@@ -255,22 +255,22 @@ def take_info():
             #print(dish_name)
             dish_amount_int = str(dish['DishAmountInt'])
             try:
-                data_prod[f'{dish_name}'][0] = int(dish_amount_int.split('.')[0])
+                data_prod[f'{dish_name}'][0] = f"{dish_amount_int.split('.')[0]}"
             except:    
                 data_prod[f'{dish_name}'] = [] 
-                data_prod[f'{dish_name}'].append(int(dish_amount_int.split('.')[0]))
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
 
         for dish in report_day['report']['r']:
             dish_name = dish['DishName']
             dish_amount_int = str(dish['DishAmountInt'])
             try:
                 try:
-                    data_prod[f'{dish_name}'][1] = int(dish_amount_int.split('.')[0])
+                    data_prod[f'{dish_name}'][1] = f"{dish_amount_int.split('.')[0]}"
                 except:
                     data_prod[f'{dish_name}'][1] = "0"
             except:   
                 #data_prod[f'{dish_name}'] = [] 
-                data_prod[f'{dish_name}'].append(int(dish_amount_int.split('.')[0]))
+                data_prod[f'{dish_name}'].append(f"{dish_amount_int.split('.')[0]}")
 
                     
         for i in data_prod:
@@ -290,7 +290,7 @@ def take_info():
                         plan_pos['factDay'] = int(float(plan_pos['planDay'])-float(data_prod[pos_prod][1]))
                         if data_prod[pos_prod][0] == '':
                             ops = 0
-                            plan_pos['factMon'] = int(float(plan_pos['planMonth'])-float(ops))
+                            plan_pos['factMon'] = int(float(plan_pos['planMonth'])-float(data_prod[pos_prod][0]))
                         else:
                             plan_pos['factMon'] = int(float(plan_pos['planMonth'])-float(data_prod[pos_prod][0]))
 

@@ -31,8 +31,10 @@
                 {% for el in data_prod %}
                         <tr>
                             <td>{{el['item']}}</td>
-                            <td>{{"{:,}".format(el['planDay'], locale='ru_RU')}}₽</td>
-                            <td>{{"{:,}".format(el['planDay'], locale='ru_RU')}}₽</td>
+                            {% set planDay = el['planDay'] | int %}
+                            <td>{{"{:,}".format(planDay)}}₽</td>
+                            {% set planMonth = el['planMonth'] | int %}
+                            <td>{{"{:,}".format(el['planMonth'])}}₽</td>
                             
                         </tr>
                 {% endfor %}   
