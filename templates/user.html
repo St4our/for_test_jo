@@ -32,8 +32,8 @@
                 {% for el in data_prod %}
                         <tr>
                             <td>{{el['item']}}</td>
-                            <td>{{"{:,}".format(el['planDay'])}}₽</td>
-                            <td>{{"{:,}".format(el['factDay'])}}₽</td>
+                            <td>{{"{:,}".format(int(el['planDay']))}}₽</td>
+                            <td>{{"{:,}".format(int(el['factDay']))}}₽</td>
                             <!-- <td>{{el['planMonth']}}</td>
                             <td>{{el['factMon']}}</td> -->
                         </tr>
