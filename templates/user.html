@@ -24,18 +24,16 @@
                     <th>Позиция</th>
                     <th>План (день)</th>
                     <th>Осталось продать за день</th>
-                    <!-- <th>План (месяц)</th>
-                    <th>Осталось продать за месяц</th> -->
+                    
                 </tr>
             </thead>
             <tbody>    
                 {% for el in data_prod %}
                         <tr>
                             <td>{{el['item']}}</td>
-                            <td>{{"{:,}".format(int(el['planDay']))}}₽</td>
-                            <td>{{"{:,}".format(int(el['factDay']))}}₽</td>
-                            <!-- <td>{{el['planMonth']}}</td>
-                            <td>{{el['factMon']}}</td> -->
+                            <td>{{"{:,}".format(el['planDay'], locale='ru_RU')}}₽</td>
+                            <td>{{"{:,}".format(el['planDay'], locale='ru_RU')}}₽</td>
+                            
                         </tr>
                 {% endfor %}   
             
@@ -45,5 +43,9 @@
     </div>
     <img class="logo" src="{{ url_for('static', filename='icon.png') }}">
     <!-- </div> -->
+    <!-- <td>{{el['planMonth']}}</td>-->
+    <!--<td>{{el['factMon']}}</td> -->
+    <!-- <th>План (месяц)</th>-->
+    <!--<th>Осталось продать за месяц</th> -->
 </body>
 </html>
