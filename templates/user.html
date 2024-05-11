@@ -32,9 +32,9 @@
                         <tr>
                             <td>{{el['item']}}</td>
                             {% set planDay = el['planDay'] | int %}
-                            <td>{{"{:,}".format(planDay)}}₽</td>
+                            <td>{{"{:.}".format(planDay)}}₽</td>
                             {% set factDay = el['factDay'] | int %}
-                            <td>{{"{:,}".format(factDay)}}₽</td>
+                            <td>{{"{:.}".format(factDay)}}₽</td>
                             
                         </tr>
                 {% endfor %}   
