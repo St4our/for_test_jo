@@ -29,7 +29,7 @@
             </thead>
             <tbody>    
                 {% for el in data_prod %}
-                    {% if el['item']!= "Задача" %}
+                    {% if "Задача" not in el['item'] %}
                         <tr>
                             <td>{{el['item']}}</td>
                             {% set planDay = el['planDay'] | int %}
@@ -44,20 +44,26 @@
             </tbody>
         </table>
 
+        <div class="a">
+            <h1>------------</h1>
+        </div>
+
         <div class="table-container">
             <table id="editableTable">
                 <thead>
                     <tr>
                         <th>Имя</th>
+                        <th> </th>
                         <th>Задача</th>
                         
                     </tr>
                 </thead>
                 <tbody>    
                     {% for el in data_prod %}
-                        {% if el['item']== "Задача" %}
+                        {% if 'Задача' in el['item'] %}
                             <tr>
                                 <td>{{el['planDay']}}</td>
+                                <td>-</td>
                                 <td>{{el['factDay']}}</td>
                                 
                             </tr>

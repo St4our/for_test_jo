@@ -47,6 +47,10 @@ th {
     height: auto; /* Автоматически подстроит высоту, чтобы сохранить пропорции */
 }
 
+.a{
+    text-align: center;
+}
+
 
 @media screen and (max-width: 600px) {
     table, thead, tbody, th, td, tr {
