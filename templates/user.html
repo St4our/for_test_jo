@@ -29,6 +29,7 @@
             </thead>
             <tbody>    
                 {% for el in data_prod %}
+                    {% if el['item']!= "Задача" %}
                         <tr>
                             <td>{{el['item']}}</td>
                             {% set planDay = el['planDay'] | int %}
@@ -37,10 +38,34 @@
                             <td>{{"{:,.0f}".format(factDay).replace(',', '.')}}</td>
                             
                         </tr>
+                    {% endif %}
                 {% endfor %}   
             
             </tbody>
         </table>
+
+        <div class="table-container">
+            <table id="editableTable">
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Задача</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>    
+                    {% for el in data_prod %}
+                        {% if el['item']== "Задача" %}
+                            <tr>
+                                <td>{{el['planDay']}}</td>
+                                <td>{{el['factDay']}}</td>
+                                
+                            </tr>
+                        {% endif %}
+                    {% endfor %}   
+                
+                </tbody>
+            </table>
            
     </div>
     <img class="logo" src="{{ url_for('static', filename='icon.png') }}">

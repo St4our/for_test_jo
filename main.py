@@ -286,7 +286,7 @@ def take_info():
             for pos_prod in data_prod:
                 #if str(pos_prod) in plan_info:
                 for plan_pos in plan_info:
-                    if str(plan_pos['item']) == str(pos_prod):
+                    if str(plan_pos['item']) == str(pos_prod) and str(plan_pos['item']) != 'Задача':
                         plan_pos['factDay'] = int(float(plan_pos['planDay'])-float(data_prod[pos_prod][1]))
                         if data_prod[pos_prod][0] == '':
                             ops = 0
