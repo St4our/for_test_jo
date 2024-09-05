@@ -4,77 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jojo</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script>
         function refreshPage() {
             location.reload(); // Перезагружает текущую страницу
         }
-    
+
         // Устанавливаем таймер на 5 минут (300000 миллисекунд)
         setTimeout(refreshPage, 5000);
     </script>
 </head>
 <body>
-    <!-- <div class="content"> -->
-    <div class="table-container">
-        <table id="editableTable">
-            <thead>
-                <tr>
-                    <th>Позиция</th>
-                    <th>План (день)</th>
-                    <th>Осталось продать за день</th>
-                    
-                </tr>
-            </thead>
-            <tbody>    
-                {% for el in data_prod %}
-                    {% if "Задача" not in el['item'] %}
-                        <tr>
-                            <td>{{el['item']}}</td>
-                            {% set planDay = el['planDay'] | int %}
-                            <td>{{"{:,.0f}".format(planDay).replace(',', '.')}}</td>
-                            {% set factDay = el['factDay'] | int %}
-                            <td>{{"{:,.0f}".format(factDay).replace(',', '.')}}</td>
-                            
-                        </tr>
-                    {% endif %}
-                {% endfor %}   
-            
-            </tbody>
-        </table>
-    </div>
+<!-- <div class="content"> -->
+<div class="table-container">
+    <table id="editableTable">
+        <thead>
+        <tr>
+            <th>Позиция</th>
+            <th>План (день)</th>
+            <th>Осталось продать за день</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for plan in plans %}
+            <tr>
+            <td>{{ plan['name'] }}</td>
+            <td>{{ plan['plan'] }}</td>
+            <td>{{ plan['remainder'] }}</td>
+            {#                {% set planDay = el['planDay'] | int %}#}
+            {#                <td>{{ "{:,.0f}".format(planDay).replace(',', '.') }}</td>#}
+            {#                {% set factDay = el['factDay'] | int %}#}
+            {#                <td>{{ "{:,.0f}".format(factDay).replace(',', '.') }}</td>#}
+        {% endfor %}
 
-        <div class="a">
-            <h1> </h1>
-        </div>
+        </tbody>
+    </table>
+</div>
 
-        <div class="table-container">
-            <table id="editableTable">
-                <thead>
-                    <tr>
-                        <th>Имя</th>
-                        <th> </th>
-                        <th>Задача</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>    
-                    {% for el in data_prod %}
-                        {% if 'Задача' in el['item'] %}
-                            <tr>
-                                <td>{{el['planDay']}}</td>
-                                <td>-</td>
-                                <td>{{el['planMonth']}}</td>
-                                
-                            </tr>
-                        {% endif %}
-                    {% endfor %}   
-                
-                </tbody>
-            </table>
-           
-    </div>
-    <img class="logo" src="{{ url_for('static', filename='icon.png') }}">
+<div class="a">
+    <h1></h1>
+</div>
+
+<div class="table-container">
+    <table id="editableTable">
+        <thead>
+        <tr>
+            <th>Задача</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task['name'] }}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+</div>
+<img class="logo" src="{{ url_for('static', filename='icon.png') }}">
 </body>
 </html>

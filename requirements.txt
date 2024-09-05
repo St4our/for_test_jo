@@ -4,3 +4,5 @@ pytz
 python-dateutil
 xmltodict
 telebot
+pydantic_settings
+peewee

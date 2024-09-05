@@ -3,89 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jojo</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Jojo ADMIN</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    
-    <select id="dropdown">
-        <option value="Задача">Задача</option>
-        <option value="Задача2">Задача2</option>
-        <option value="Задача3">Задача3</option>
-        <option value="Задача4">Задача4</option>
-        <option value="Задача5">Задача5</option>
-        <option value="Задача6">Задача6</option>
-        <option value="Задача6">Задача7</option>
-        {% for el in articles %}
-            <option value="{{el}}">{{el}}</option>
-        {% endfor %} 
-    </select>
-    
-    <button id="addToTable">Добавить в таблицу</button>
-    <table id="dataTable">
-        <thead>
-            <tr>
-                <th>Элементы</th>
-                <th>План день</th>
-                <th>План месяц</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-    <button id="saveData">Сохранить данные</button>
-    <script>
-        $(document).ready(function() {
-            var dataArray = [];
-    
-            $('#addToTable').click(function() {
-                var selectedItem = $('#dropdown').val();
-                if (selectedItem) {
-                    var row = $('<tr><td>' + selectedItem + '</td><td><input type="text" class="planDay"></td><td><input type="text" class="planMonth"></td><td><button class="deleteBtn">Удалить</button></td></tr>');
-                    $('#dataTable tbody').append(row);
-                    dataArray.push({
-                        item: selectedItem,
-                        planDay: '',
-                        planMonth: ''
-                    });
+<select id="dropdown">
+    <option value="Задача">Задача</option>
+    <option value="Задача2">Задача2</option>
+    <option value="Задача3">Задача3</option>
+    <option value="Задача4">Задача4</option>
+    <option value="Задача5">Задача5</option>
+    <option value="Задача6">Задача6</option>
+    <option value="Задача6">Задача7</option>
+    {% for article in articles %}
+        <option value="{{ article }}">{{ article }}</option>
+    {% endfor %}
+</select>
+<button id="addToTable">Добавить в таблицу</button>
+<table id="dataTable">
+    <thead>
+    <tr>
+        <th>Элементы</th>
+        <th>План (месяц)</th>
+        <th>Осталось (месяц)</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>
+                <input type="text" class="planMonth" disabled>
+            </td>
+            <td>
+                <input type="text" class="remainingMonth" disabled>
+            </td>
+
+            <td>
+                <button class="deleteBtn">Удалить</button>
+            </td>
+        </tr>
+    {% endfor %}
+    {% for plan in plans %}
+        <tr>
+            <td>{{ plan.name }}</td>
+            <td>
+                <input type="text" class="plan_month_value" value="{{ plan.plan_month_value }}">
+            </td>
+            <td>
+                <input type="text" class="plan_month" value="{{ plan.plan_month }}">
+            </td>
+            <td>
+                <button class="deleteBtn">Удалить</button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<button id="saveData">Сохранить данные</button>
+<a href="/user">Перейти на Таблицу</a>
+<script>
+    $(document).ready(function () {
+        let dataArray = [];
+
+        $('#addToTable').click(function () {
+            let selectedItem = $('#dropdown').val();
+            if (selectedItem) {
+                let row = ''
+                if (selectedItem.includes('Задача')) {
+                    row = $(
+                        '<tr>' +
+                        '<td>' + selectedItem + '</td>' +
+                        '<td><input type="text" class="plan_month_value" disabled></td>' +
+                        '<td><input type="text" class="plan_month" disabled></td>' +
+                        '<td><button class="deleteBtn">Удалить</button></td>' +
+                        '</tr>'
+                    );
+                } else {
+                    row = $(
+                        '<tr>' +
+                        '<td>' + selectedItem + '</td>' +
+                        '<td><input type="text" class="plan_month_value"></td>' +
+                        '<td><input type="text" class="plan_month"></td>' +
+                        '<td><button class="deleteBtn">Удалить</button></td>' +
+                        '</tr>'
+                    );
                 }
-            });
-    
-            $('#dataTable').on('click', '.deleteBtn', function() {
-                var row = $(this).closest('tr');
-                var item = row.find('td:first').text();
-                row.remove();
-                dataArray = dataArray.filter(function(el) {
-                    return el.item !== item;
-                });
-            });
-    
-            $('#saveData').click(function() {
-                dataArray.forEach(function(el, index) {
-                    var row = $('#dataTable tbody tr').eq(index);
-                    el.planDay = row.find('.planDay').val();
-                    el.planMonth = row.find('.planMonth').val();
-                });
-                $.ajax({
-                    url: '/admin',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(dataArray),
-                    success: function(response) {
-                        console.log(response);
-                        alert('Данные успешно сохранены!');
-                    },
-                    error: function(error) {
-                        console.log(error);
-                        alert('Ошибка при сохранении данных!');
-                    }
-                });
+                $('#dataTable tbody').append(row);
+            }
+        });
+
+        $('#dataTable').on('click', '.deleteBtn', function () {
+            let row = $(this).closest('tr');
+            let item = row.find('td:first').text();
+            row.remove();
+            dataArray = dataArray.filter(function (el) {
+                return el.item !== item;
             });
         });
-    </script>
-    <a href="/user">Перейти на Таблицу</a>
+
+        $('#saveData').click(function () {
+            const table = document.getElementById('dataTable');
+            const data = [];
+            for (let i = 1; i < table.rows.length; i++) {
+                const row = table.rows[i];
+                const rowData = {};
+                rowData['name'] = row.cells[0].innerText;
+                rowData['plan_month_value'] = row.querySelector('.plan_month_value').value;
+                rowData['plan_month'] = row.querySelector('.plan_month').value;
+                data.push(rowData);
+            }
+
+            $.ajax({
+                url: '/admin',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('Данные успешно сохранены!');
+                },
+                error: function (error) {
+                    alert('Ошибка при сохранении данных!');
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
