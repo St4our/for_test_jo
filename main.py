@@ -216,6 +216,22 @@ def take_info():
                 int(data_prod['Demidov Б/А'][1]),
             ]),
         ]
+        data_prod['Десерты'] = [
+            sum([
+                int(data_prod['Чизкейк "Клубничный пломбир"'][0]),
+                int(data_prod['Чизкейк "Манго-маракуйя"'][0]),
+                int(data_prod['Чизкейк "Сникерс"'][0]),
+                int(data_prod['Моти'][0]),
+                int(data_prod['Сырники из рикотты'][0]),
+            ]),
+            sum([
+                int(data_prod['Чизкейк "Клубничный пломбир"'][1]),
+                int(data_prod['Чизкейк "Манго-маракуйя"'][1]),
+                int(data_prod['Чизкейк "Сникерс"'][1]),
+                int(data_prod['Моти'][1]),
+                int(data_prod['Сырники из рикотты'][1]),
+            ]),
+        ]
 
         for pos_prod in data_prod:
             plan_pos: Plan = PlanRepository().get(name=pos_prod)
